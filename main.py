@@ -5,7 +5,7 @@
 # @Date:   2015-06-01 10:18:10
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-01 13:56:14
+# @Last Modified time: 2015-06-02 10:59:21
 
 
 #append pwd to pyhton path
@@ -14,7 +14,6 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import mould
-import argparse
 
 
 def main(args):

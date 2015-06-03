@@ -1,0 +1,26 @@
+## Structures
+	<dir>
+		|-- __init__.py 
+
+	
+	where <dir> is the name of the action
+
+## __init__.py
+
+	1. Must have one variable called __plugin_type__ with value 'action'
+	this is just a check that this dir / module is a action module
+
+	2. Must have _init_plugin_(args, site, document, post)
+		action executor will call this function wtih given parametor 
+		it shoud return `True` if success else `False`
+		where :
+			args = sys.argv[1:] this is if action has some extra command line parametors
+			site = base object which represent entire site normally it has everything (posts, document)
+			document = just for convenience
+			post = just for convenience
+
+	3. Must have _run_plugin_() 
+		if the _init_plugin_ returns True
+		action executor will run this function 
+		this is where the process initiat.
+
