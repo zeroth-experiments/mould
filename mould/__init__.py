@@ -5,7 +5,7 @@
 # @Date:   2015-06-01 09:59:47
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-02 11:51:53
+# @Last Modified time: 2015-06-04 11:49:17
 import os
 import sys
 import imp
@@ -14,7 +14,7 @@ from .generator import Generator
 DEFAULT_ACTIONS_DIR = 'actions'
 PWD = os.path.dirname(os.path.abspath(__file__))
 
-def init(args):
+def init(args, config):
 	actions_dir = os.path.join(PWD, DEFAULT_ACTIONS_DIR)
 	#print actions_dir
 	if(os.path.exists(actions_dir)):
@@ -42,7 +42,7 @@ def init(args):
 		sys.exit(1)
 
 	# TODO: have to do somthing about configuration file
-	site = Generator({'title':'Zeroth.me', 'url':'http://zeroth.me', 'source':'.'})
+	site = Generator(config)
 	
 	# documents = site.documents
 	# posts = site.posts

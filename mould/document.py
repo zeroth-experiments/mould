@@ -5,7 +5,7 @@
 # @Date:   2015-06-01 08:04:45
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-03 13:23:21
+# @Last Modified time: 2015-06-04 13:41:47
 import os
 import sys
 import re
@@ -28,7 +28,7 @@ class Document:
 	
 	______________________
 	"""
-	def __init__(self, path):
+	def __init__(self, path, config):
 		if not os.path.exist(path):
 			print "File %s does not exist" % path
 			sys.exit(1)
@@ -45,6 +45,9 @@ class Document:
 		
 
 		fd = open(path, 'r')
+
+	def get_document(self):
+		print "done"
 
 
 
