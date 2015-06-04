@@ -9,7 +9,7 @@
 
 import os
 
-import .document import Document
+from .document import Document
 
 DOCUMENT_IGNORE_LIST = ['_post', '_assets', 'config.json']
 
@@ -17,14 +17,17 @@ class Generator:
 	"""docstring for Generator"""
 	def __init__(self, config):
 		self.config = config
-		self.create_documents(config['source'])
 
-	def create_documents(self, source_dir):
-		base_dir = os.path.abspath(source_dir)
+		if config['document']:
+			self.create_documents(config)
+
+	def create_documents(self, config):
+		base_dir = os.path.abspath(config['source'])
 		base_dir_list = os.listdir(base_dir)
 
 		dirs_to_process = os.listdir(base_dir)
 		# print process_dirs
+
 		for d in base_dir_list:
 			if DOCUMENT_IGNORE_LIST.count(d.strip()):
 			 	dirs_to_process.remove(d.strip())
@@ -33,17 +36,28 @@ class Generator:
 		for p in dirs_to_process:
 			p_abspath = os.path.abspath(os.path.join(base_dir, p))
 			if os.path.exists(p_abspath) and os.path.isdir(p_abspath):
-				self.process_dir(p_abspath, config)
+				self.process_document_dir(p_abspath, config)
 			else:
-				self.process_file(p_abspath, config)
+				self.process_document_file(p_abspath, None, config)
 
 
-	def process_dir(self, path, config):
-		pass
+	def process_document_dir(self, path, config):
+		dir_path = path
+		for sub_path in os.listdir(dir_path): 
+			d_abspath = os.path.abspath(os.path.join(dir_path, sub_path))
+			if os.path.exists(d_abspath) and os.path.isdir(d_abspath):
+				self.process_document_dir(d_abspath, config)
+			else:
+				#ignore the auto save files on linux by some editors
+				#TODO: add the ignore file extentions list in config
+				if d_abspath.endswith("~"):
+					continue
+				self.process_document_file(d_abspath, os.path.dirname(d_abspath), config)
 
-	def process_file(self, path, config):
-		pass
-		document = Document(path, config)
+	def process_document_file(self, path, parent, config):
+		document = Document(path, parent, config)
+		print "__________________________\n"
 		print document.get_document()
+		print "__________________________\n\n\n"
 
 		

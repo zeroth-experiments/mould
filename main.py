@@ -20,7 +20,7 @@ import mould
 cwd = os.getcwdu()
 
 def get_configuration(path):
-	config = {"source":"."}
+	config = {"source":".", "post":True, "document": True}
 	config_file_path = os.path.join(path, "config.json")
 	if(not os.path.exists(config_file_path)):
 		print "config.json is not available in %s, please add it" % cwd
@@ -40,7 +40,7 @@ def main(args):
 	if(not len(args)):
 		args.append('build')
 
-	mould.init(args, config)	
+	mould.init(args, config)
 	
 
 if __name__ == '__main__':
