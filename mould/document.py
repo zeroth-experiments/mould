@@ -40,7 +40,7 @@ class Document:
 		self.lastmodified = os.path.getmtime(document_path)
 		self.created = os.path.getmtime(document_path)
 		self.parent = None if parent == None  else self.get_parent_relative_path(parent)
-		self.process_file(document_path)
+		self.is_ready = self.process_file(document_path)
 
 	def get_parent_relative_path(self, parent):
 		project_base_dir = os.path.abspath(self.config['source'])
@@ -49,9 +49,15 @@ class Document:
 	def process_file(self, path):
 		fd = open(path, 'r')
 		raw = fd.read()
+		if raw.strip() == "" or raw == None:
+			return False
 		_, h, b = SPLITTER.split(raw, 2)
 		self.header = self.header_to_dictionary(h)
 		self.body = b.strip()
+		return ( len(self.header) > 0 )
+
+	def ready(self):
+		return self.is_ready
 
 	def header_to_dictionary(self, head):
 		lines = head.split('\n')
@@ -63,5 +69,15 @@ class Document:
 			result[key.strip()] = val.strip()
 		return result
 
-	def get_document(self):
-		return { 'header':self.header, 'body':self.body, 'lastmodified':self.lastmodified, 'created':self.created, 'parent': self.parent}
+	def get_document_object(self):
+		return { 
+				'document': {
+					'title':self.header['title'] if self.header.has_key("title") else os.path.basename(self.document_path).split('.')[0], 
+					'header':self.header, 
+					'body':self.body, 
+					'lastmodified':self.lastmodified, 
+					'created':self.created, 
+					'parent': self.parent
+					}
+				
+				}

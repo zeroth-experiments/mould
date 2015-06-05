@@ -8,6 +8,7 @@
 # @Last Modified time: 2015-06-04 13:40:29
 
 import os
+import json
 
 from .document import Document
 
@@ -17,7 +18,9 @@ class Generator:
 	"""docstring for Generator"""
 	def __init__(self, config):
 		self.config = config
-
+		self.site = {}
+		self.site['title'] = config['title']
+		self.site['url'] = config['url']
 		if config['document']:
 			self.create_documents(config)
 
@@ -32,32 +35,102 @@ class Generator:
 			if DOCUMENT_IGNORE_LIST.count(d.strip()):
 			 	dirs_to_process.remove(d.strip())
 
-		# go though each item if its dir then process_dir id file process_file
+		"""
+		example structure 
+		{
+		    "Site" : {
+		        "title": "Zeorth.me",
+		        "url":"http://zeroth.me",
+		        documents:[
+		        {"document":{
+		            "title":"About",
+		            "date":"2015-12-4",
+		            "body":"something",
+		            "header":{
+		                "title":"about"
+		            }
+		        }}],
+		        directories:[
+			        {
+				        "directory":{
+				            "title":"main",
+				            "documents":[
+				                {
+					                "document":{
+					                    "title":"About1",
+					                    "date":"2015-12-4",
+					                    "body":"something",
+					                    "header":{
+					                        "title":"about"
+					                    }
+					                }
+				                },
+				                {
+					                "document":{
+					                    "title":"About2",
+					                    "date":"2015-12-4",
+					                    "body":"something",
+					                    "header":{
+					                        "title":"about"
+					                    }
+					                }
+				                }
+				            ]
+				        }
+			        }
+		        ]
+		    }
+		}
+		"""
+		# go though each item if its dir then process_dir if file process_file
 		for p in dirs_to_process:
 			p_abspath = os.path.abspath(os.path.join(base_dir, p))
 			if os.path.exists(p_abspath) and os.path.isdir(p_abspath):
-				self.process_document_dir(p_abspath, config)
-			else:
-				self.process_document_file(p_abspath, None, config)
+				_dir = self.process_document_dir(p_abspath, config)
+				if _dir != None:
+					if(not self.site.has_key('directories')):
+						self.site['directories'] = []
+					self.site['directories'].append(_dir)
 
+			else:
+				_document = self.process_document_file(p_abspath, None, config)
+				if _document != None:
+					if(not self.site.has_key('documents')):
+						self.site['documents'] = []
+
+					self.site['documents'].append(_document)
 
 	def process_document_dir(self, path, config):
 		dir_path = path
+		dir_obj = {'path':dir_path}
 		for sub_path in os.listdir(dir_path): 
 			d_abspath = os.path.abspath(os.path.join(dir_path, sub_path))
 			if os.path.exists(d_abspath) and os.path.isdir(d_abspath):
-				self.process_document_dir(d_abspath, config)
+				sub_dir_ = self.process_document_dir(d_abspath, config)
+				if(not dir_obj.has_key('directories')):
+					dir_obj['directories'] = []
+				dir_obj['directories'].append(sub_dir_)
 			else:
-				#ignore the auto save files on linux by some editors
-				#TODO: add the ignore file extentions list in config
-				if d_abspath.endswith("~"):
-					continue
-				self.process_document_file(d_abspath, os.path.dirname(d_abspath), config)
+				sub_document_ = self.process_document_file(d_abspath, os.path.dirname(d_abspath), config)
+				if sub_document_ != None:
+					if(not dir_obj.has_key('documents')):
+						dir_obj['documents'] = []
+
+					dir_obj['documents'].append(sub_document_)
+		return dir_obj
 
 	def process_document_file(self, path, parent, config):
+		#ignore the auto save files on linux by some editors
+		#TODO: add the ignore file list in config
+		if path.endswith("~"):
+			return None
 		document = Document(path, parent, config)
-		print "__________________________\n"
-		print document.get_document()
-		print "__________________________\n\n\n"
+		# if document.ready():
+		# 	print "__________________________\n"
+		# 	print document.get_document_object()
+		# 	print "__________________________\n\n\n"
 
-		
+		return document.get_document_object() if document.ready() else None
+
+	def get_site(self):
+		return self.site
