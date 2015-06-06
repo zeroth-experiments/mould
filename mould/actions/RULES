@@ -10,7 +10,7 @@
 	1. Must have one variable called __plugin_type__ with value 'action'
 	this is just a check that this dir / module is a action module
 
-	2. Must have _init_plugin_(args, site, document, post)
+	2. Must have _init_plugin_(args, site, config)
 		action executor will call this function wtih given parametor 
 		it shoud return `True` if success else `False`
 		where :

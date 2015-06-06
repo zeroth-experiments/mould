@@ -5,7 +5,7 @@
 # @Date:   2015-06-01 10:18:10
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-04 11:48:44
+# @Last Modified time: 2015-06-06 22:05:00
 
 
 #append pwd to pyhton path
@@ -20,7 +20,7 @@ import mould
 cwd = os.getcwdu()
 
 def get_configuration(path):
-	config = {"source":".", "post":True, "document": True}
+	config = {"source":cwd, "post":True, "document": True, "baseurl":'/'}
 	config_file_path = os.path.join(path, "config.json")
 	if(not os.path.exists(config_file_path)):
 		print "config.json is not available in %s, please add it" % cwd

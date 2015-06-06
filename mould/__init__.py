@@ -5,7 +5,7 @@
 # @Date:   2015-06-01 09:59:47
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-04 11:49:17
+# @Last Modified time: 2015-06-06 13:50:54
 import os
 import sys
 import imp
@@ -42,9 +42,10 @@ def init(args, config):
 		sys.exit(1)
 
 	# TODO: have to do somthing about configuration file
-	site = Generator(config)
+	site_generator = Generator(config)
+	site = site_generator.get_site()
 	
 	# documents = site.documents
 	# posts = site.posts
-	# if(action._init_plugin_(args, site, documents, posts)):
-	# 	action._run_plugin_()
+	if(action._init_plugin_(args, site, config)):
+		action._run_plugin_()

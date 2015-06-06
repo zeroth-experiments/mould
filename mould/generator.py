@@ -5,14 +5,14 @@
 # @Date:   2015-06-02 11:40:59
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-04 13:40:29
+# @Last Modified time: 2015-06-06 22:09:04
 
 import os
 import json
 
 from .document import Document
 
-DOCUMENT_IGNORE_LIST = ['_post', '_assets', 'config.json']
+DOCUMENT_IGNORE_LIST = ['_post', '_assets', 'config.json', '_layouts', '_site']
 
 class Generator:
 	"""docstring for Generator"""
@@ -21,11 +21,14 @@ class Generator:
 		self.site = {}
 		self.site['title'] = config['title']
 		self.site['url'] = config['url']
+		self.site['baseurl'] = config['baseurl']
+		self.site['pages'] = {}
+		self.site['posts'] = []
 		if config['document']:
 			self.create_documents(config)
 
 	def create_documents(self, config):
-		base_dir = os.path.abspath(config['source'])
+		base_dir = config['source']
 		base_dir_list = os.listdir(base_dir)
 
 		dirs_to_process = os.listdir(base_dir)
@@ -88,17 +91,17 @@ class Generator:
 			if os.path.exists(p_abspath) and os.path.isdir(p_abspath):
 				_dir = self.process_document_dir(p_abspath, config)
 				if _dir != None:
-					if(not self.site.has_key('directories')):
-						self.site['directories'] = []
-					self.site['directories'].append(_dir)
+					if(not self.site['pages'].has_key('directories')):
+						self.site['pages']['directories'] = []
+					self.site['pages']['directories'].append(_dir)
 
 			else:
 				_document = self.process_document_file(p_abspath, None, config)
 				if _document != None:
-					if(not self.site.has_key('documents')):
-						self.site['documents'] = []
+					if(not self.site['pages'].has_key('documents')):
+						self.site['pages']['documents'] = []
 
-					self.site['documents'].append(_document)
+					self.site['pages']['documents'].append(_document)
 
 	def process_document_dir(self, path, config):
 		dir_path = path
