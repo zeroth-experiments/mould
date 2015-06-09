@@ -4,7 +4,7 @@
 # @Email: abhishek@zeroth.me
 # @Date:   2015-06-06 13:33:06
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-06 22:03:03
+# @Last Modified time: 2015-06-08 20:13:07
 # @License: Please read LICENSE file in project root#!/usr/bin/env python
 
 import sys
@@ -50,10 +50,12 @@ class JinjaBuilder:
         for doc in pages_documents:
             self.process_document(doc)
 
+            #TODO subdirectory feature needs to think properly
+
         self.process_misc()
 
     def process_document(self, document):
-        d = document['document']
+        d = document
         doc_filename = d['filename'].split('.')[0]
         doc_dir_name = '_'.join(doc_filename.split())
         doc_target_dir = os.path.join(self.project_target, doc_dir_name)
@@ -74,6 +76,6 @@ class JinjaBuilder:
 
     def process_misc(self):
         #move assets to _site
-        if(os.path.join(self.project_target, "assets")):
+        if(os.path.exists(os.path.join(self.project_target, "assets"))):
             shutil.rmtree(os.path.join(self.project_target, "assets"))
         shutil.copytree(os.path.join(self.project_base, "_assets"), os.path.join(self.project_target, "assets"))

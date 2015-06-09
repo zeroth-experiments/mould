@@ -5,7 +5,7 @@
 # @Date:   2015-06-01 09:59:47
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-06 13:50:54
+# @Last Modified time: 2015-06-08 20:10:49
 import os
 import sys
 import imp
@@ -44,6 +44,9 @@ def init(args, config):
 	# TODO: have to do somthing about configuration file
 	site_generator = Generator(config)
 	site = site_generator.get_site()
+
+	# import json
+	# print json.dumps(site, indent=2)
 	
 	# documents = site.documents
 	# posts = site.posts

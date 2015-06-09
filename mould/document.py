@@ -5,7 +5,7 @@
 # @Date:   2015-06-01 08:04:45
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-06 14:41:53
+# @Last Modified time: 2015-06-08 20:07:29
 import os
 import sys
 import re
@@ -71,7 +71,6 @@ class Document:
 
 	def get_document_object(self):
 		return { 
-				'document': {
 					'title':self.header['title'] if self.header.has_key("title") else os.path.basename(self.document_path).split('.')[0], 
 					'header':self.header, 
 					'body':self.body, 
@@ -81,6 +80,4 @@ class Document:
 					'path':self.document_path,
 					'relpath':os.path.relpath(self.document_path, self.config['source']),
 					'filename':os.path.basename(self.document_path)
-					}
-				
 				}

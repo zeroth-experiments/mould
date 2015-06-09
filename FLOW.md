@@ -31,9 +31,54 @@
    
    based on documents and post categories create required directories.
 
+## Python Dictionary structure expected
 
-
-
-	
-	
-     
+      """
+      example structure 
+      {
+          "Site" : {
+              "title": "Zeorth.me",
+              "url":"http://zeroth.me",
+              pages:{
+              documents:[
+              {"document":{
+                  "title":"About",
+                  "date":"2015-12-4",
+                  "body":"something",
+                  "header":{
+                      "title":"about"
+                  }
+              }}],
+              directories:[
+                 {
+                    "directory":{
+                        "title":"main",
+                        "documents":[
+                            {
+                               "document":{
+                                   "title":"About1",
+                                   "date":"2015-12-4",
+                                   "body":"something",
+                                   "header":{
+                                       "title":"about"
+                                   }
+                               }
+                            },
+                            {
+                               "document":{
+                                   "title":"About2",
+                                   "date":"2015-12-4",
+                                   "body":"something",
+                                   "header":{
+                                       "title":"about"
+                                   }
+                               }
+                            }
+                        ]
+                    }
+                 }
+              ]
+           }
+          }
+      }
+      """

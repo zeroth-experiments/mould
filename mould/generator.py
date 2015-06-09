@@ -5,14 +5,15 @@
 # @Date:   2015-06-02 11:40:59
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-06 22:09:04
+# @Last Modified time: 2015-06-08 20:35:04
 
 import os
 import json
 
 from .document import Document
 
-DOCUMENT_IGNORE_LIST = ['_post', '_assets', 'config.json', '_layouts', '_site']
+DOCUMENT_IGNORE_LIST = ['_posts', '_assets', 'config.json', '_layouts', '_site']
+POST_DIR = '_posts'
 
 class Generator:
 	"""docstring for Generator"""
@@ -26,6 +27,14 @@ class Generator:
 		self.site['posts'] = []
 		if config['document']:
 			self.create_documents(config)
+		if config["post"]:
+			self.create_posts(config)
+
+	def create_posts(self, config):
+		base_dir = config['source']
+		post_dir = os.path.join(base_dir, POST_DIR)
+		pass
+
 
 	def create_documents(self, config):
 		base_dir = config['source']
@@ -38,53 +47,6 @@ class Generator:
 			if DOCUMENT_IGNORE_LIST.count(d.strip()):
 			 	dirs_to_process.remove(d.strip())
 
-		"""
-		example structure 
-		{
-		    "Site" : {
-		        "title": "Zeorth.me",
-		        "url":"http://zeroth.me",
-		        documents:[
-		        {"document":{
-		            "title":"About",
-		            "date":"2015-12-4",
-		            "body":"something",
-		            "header":{
-		                "title":"about"
-		            }
-		        }}],
-		        directories:[
-			        {
-				        "directory":{
-				            "title":"main",
-				            "documents":[
-				                {
-					                "document":{
-					                    "title":"About1",
-					                    "date":"2015-12-4",
-					                    "body":"something",
-					                    "header":{
-					                        "title":"about"
-					                    }
-					                }
-				                },
-				                {
-					                "document":{
-					                    "title":"About2",
-					                    "date":"2015-12-4",
-					                    "body":"something",
-					                    "header":{
-					                        "title":"about"
-					                    }
-					                }
-				                }
-				            ]
-				        }
-			        }
-		        ]
-		    }
-		}
-		"""
 		# go though each item if its dir then process_dir if file process_file
 		for p in dirs_to_process:
 			p_abspath = os.path.abspath(os.path.join(base_dir, p))
