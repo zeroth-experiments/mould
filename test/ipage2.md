@@ -2,7 +2,7 @@
 title: Test page 2
 author: Abhishek
 date: 2015-05-15
-layout:page
+layout: page
 ---
 
 #This is test page one outside of the folder

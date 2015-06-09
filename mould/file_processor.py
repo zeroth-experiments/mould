@@ -5,16 +5,22 @@
 # @Date:   2015-06-01 08:04:45
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-08 20:07:29
+# @Last Modified time: 2015-06-09 11:22:43
 import os
 import sys
 import re
+import yaml
 
 SPLITTER = re.compile(r'^-{3,}$', re.MULTILINE)
 
-class Document:
+def enum(**enums):
+    return type('Enum', (), enums)
+
+Types = enum(DOCUMENT=1, POST=2)
+
+class FileProcessor:
 	"""
-	Document structure
+	File structure
 
 	______________________
 
@@ -28,7 +34,7 @@ class Document:
 	
 	______________________
 	"""
-	def __init__(self, document_path, parent, config):
+	def __init__(self, document_path, parent, config, file_type):
 		if not os.path.exists(document_path):
 			print 'File %s does not exist' % document_path
 			sys.exit(1)
@@ -41,6 +47,7 @@ class Document:
 		self.created = os.path.getmtime(document_path)
 		self.parent = None if parent == None  else self.get_parent_relative_path(parent)
 		self.is_ready = self.process_file(document_path)
+		self.file_type = file_type
 
 	def get_parent_relative_path(self, parent):
 		project_base_dir = self.config['source']
@@ -49,10 +56,16 @@ class Document:
 	def process_file(self, path):
 		fd = open(path, 'r')
 		raw = fd.read()
+		fd.close()
 		if raw.strip() == "" or raw == None:
 			return False
 		_, h, b = SPLITTER.split(raw, 2)
-		self.header = self.header_to_dictionary(h)
+		# self.header = self.header_to_dictionary(h)
+		try:
+			self.header = yaml.safe_load(h)
+		except:
+			print "check the header of the file again %s : %s" % (path, h)
+
 		self.body = b.strip()
 		return ( len(self.header) > 0 )
 
@@ -60,6 +73,7 @@ class Document:
 		return self.is_ready
 
 	def header_to_dictionary(self, head):
+		# Not in use now but lets see if we could use it as exception if yaml not working
 		lines = head.split('\n')
 		result = {}
 		for l in lines:
@@ -79,5 +93,6 @@ class Document:
 					'parent': self.parent,
 					'path':self.document_path,
 					'relpath':os.path.relpath(self.document_path, self.config['source']),
-					'filename':os.path.basename(self.document_path)
+					'filename':os.path.basename(self.document_path),
+					'type':self.file_type
 				}

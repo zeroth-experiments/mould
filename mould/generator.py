@@ -5,12 +5,14 @@
 # @Date:   2015-06-02 11:40:59
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-08 20:35:04
+# @Last Modified time: 2015-06-09 10:38:36
 
 import os
+import sys
 import json
 
-from .document import Document
+from .file_processor import FileProcessor
+from .file_processor import Types
 
 DOCUMENT_IGNORE_LIST = ['_posts', '_assets', 'config.json', '_layouts', '_site']
 POST_DIR = '_posts'
@@ -33,7 +35,17 @@ class Generator:
 	def create_posts(self, config):
 		base_dir = config['source']
 		post_dir = os.path.join(base_dir, POST_DIR)
-		pass
+		if(not os.path.exists(post_dir)):
+			print "Error: _posts dose not exists"
+			sys.exit(1)
+
+		post_file_list = os.listdir(post_dir)
+		for post_file in post_file_list:
+			post_file_abspath = os.path.abspath(os.path.join(post_dir, post_file))
+			if(os.path.exists(post_file_abspath) and os.path.isfile(post_file_abspath)):
+				_post = self.process_document_file(post_file_abspath, None, config, Types.POST)
+				if _post != None:
+					self.site['posts'].append(_post)
 
 
 	def create_documents(self, config):
@@ -58,7 +70,7 @@ class Generator:
 					self.site['pages']['directories'].append(_dir)
 
 			else:
-				_document = self.process_document_file(p_abspath, None, config)
+				_document = self.process_document_file(p_abspath, None, config, Types.DOCUMENT)
 				if _document != None:
 					if(not self.site['pages'].has_key('documents')):
 						self.site['pages']['documents'] = []
@@ -76,7 +88,7 @@ class Generator:
 					dir_obj['directories'] = []
 				dir_obj['directories'].append(sub_dir_)
 			else:
-				sub_document_ = self.process_document_file(d_abspath, os.path.dirname(d_abspath), config)
+				sub_document_ = self.process_document_file(d_abspath, os.path.dirname(d_abspath), config, Types.DOCUMENT)
 				if sub_document_ != None:
 					if(not dir_obj.has_key('documents')):
 						dir_obj['documents'] = []
@@ -84,12 +96,12 @@ class Generator:
 					dir_obj['documents'].append(sub_document_)
 		return dir_obj
 
-	def process_document_file(self, path, parent, config):
+	def process_document_file(self, path, parent, config, file_type):
 		#ignore the auto save files on linux by some editors
 		#TODO: add the ignore file list in config
 		if path.endswith("~"):
 			return None
-		document = Document(path, parent, config)
+		document = FileProcessor(path, parent, config, file_type)
 		# if document.ready():
 		# 	print "__________________________\n"
 		# 	print document.get_document_object()
