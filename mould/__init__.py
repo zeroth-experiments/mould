@@ -5,11 +5,11 @@
 # @Date:   2015-06-01 09:59:47
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-08 20:10:49
+# @Last Modified time: 2015-06-09 13:05:42
 import os
 import sys
 import imp
-from .generator import Generator
+
 
 DEFAULT_ACTIONS_DIR = 'actions'
 PWD = os.path.dirname(os.path.abspath(__file__))
@@ -18,7 +18,7 @@ def init(args, config):
 	actions_dir = os.path.join(PWD, DEFAULT_ACTIONS_DIR)
 	#print actions_dir
 	if(os.path.exists(actions_dir)):
-		sys.path.append(actions_dir)
+		sys.path.insert(0, actions_dir)
 	else:
 		print 'Actions are not in path'
 		sys.exit(1)
@@ -36,19 +36,16 @@ def init(args, config):
 		print 'Action you are requesting dose not exist.'
 		sys.exit(1)
 
-	# Check if the action is a valid plugin 
+	# Check if the action is a valid plugin
+	print action
 	if not (hasattr(action, '__plugin_type__') and action.__plugin_type__ == 'action'):
 		print 'Error: InvalidType Seems like plugin "%s" is not of type "action"'% args[0]
 		sys.exit(1)
-
-	# TODO: have to do somthing about configuration file
-	site_generator = Generator(config)
-	site = site_generator.get_site()
 
 	# import json
 	# print json.dumps(site, indent=2)
 	
 	# documents = site.documents
 	# posts = site.posts
-	if(action._init_plugin_(args, site, config)):
+	if(action._init_plugin_(args, config)):
 		action._run_plugin_()
