@@ -5,7 +5,7 @@
 # @Date:   2015-06-01 09:59:47
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-09 13:05:42
+# @Last Modified time: 2015-06-09 15:47:24
 import os
 import sys
 import imp
@@ -29,7 +29,6 @@ def init(args, config):
 		Thre are few rules about how to develope actions mor on them in actions/RULES
 	"""
 	try:
-		#print args[0]
 		action = __import__(args[0])
 	except ImportError:
 		print 'Cannot import action module %s' % args[0]
@@ -37,7 +36,6 @@ def init(args, config):
 		sys.exit(1)
 
 	# Check if the action is a valid plugin
-	print action
 	if not (hasattr(action, '__plugin_type__') and action.__plugin_type__ == 'action'):
 		print 'Error: InvalidType Seems like plugin "%s" is not of type "action"'% args[0]
 		sys.exit(1)

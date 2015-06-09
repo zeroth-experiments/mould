@@ -5,7 +5,7 @@
 # @Date:   2015-06-01 10:18:10
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-09 13:08:59
+# @Last Modified time: 2015-06-09 15:44:42
 
 
 #append pwd to pyhton path
@@ -37,12 +37,11 @@ def get_configuration(path, args):
 
 
 def main(args):
-	config =  get_configuration(cwd, args)
-
 	# Default action is build
 	if(not len(args)):
 		args.append('build')
 
+	config =  get_configuration(cwd, args)
 	mould.init(args, config)
 	
 

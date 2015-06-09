@@ -4,7 +4,7 @@
 # @Email: abhishek@zeroth.me
 # @Date:   2015-06-06 13:33:06
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-09 12:03:51
+# @Last Modified time: 2015-06-09 15:47:07
 # @License: Please read LICENSE file in project root#!/usr/bin/env python
 
 import sys
@@ -14,7 +14,7 @@ import shutil
 from datetime import datetime
 
 try:
-    from jinja2 import Environment, FileSystemLoader
+    from jinja2 import Environment, DictLoader
 except ImportError:
     print 'You require Jinja2 to use Mould'
     sys.exit(1)
@@ -42,7 +42,33 @@ class JinjaBuilder:
         
         self.markdown = Markdown()
         self.template_dir_path = os.path.join(self.project_base, TEMPLATEDIR)
-        self.jinja_env = Environment(loader= FileSystemLoader(self.template_dir_path))
+        template_dictionary = self.get_template_dict(self.template_dir_path)
+        self.jinja_env = Environment(loader= DictLoader(template_dictionary))
+
+    def get_template_dict(self, dir_path):
+        if(not os.path.exists(dir_path)):
+            print "_layouts folder dose not exists"
+            sys.exit(1)
+
+        template_dict = {}
+        template_file_list = os.listdir(dir_path)
+        if len(template_file_list) < 1:
+            print "_layouts should not be empty, put some templates there"
+            sys.exit(1)
+        for template_file in template_file_list:
+            template_path = os.path.join(dir_path,template_file)
+            if(os.path.isdir(template_path)):
+                _dict = self.get_template_dict(template_path)
+                if(len(_dict)>0):
+                    template_dict.update(_dict)
+            else:
+                template_name = template_file
+                fd = open(template_path, 'r')
+                template_content = fd.read()
+                fd.close()
+                template_dict[template_name] = template_content
+
+        return template_dict
 
     def process(self):
         #lets 1st process all the pages
