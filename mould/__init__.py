@@ -5,7 +5,7 @@
 # @Date:   2015-06-01 09:59:47
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-09 15:47:24
+# @Last Modified time: 2015-06-11 09:57:18
 import os
 import sys
 import imp
@@ -40,10 +40,5 @@ def init(args, config):
 		print 'Error: InvalidType Seems like plugin "%s" is not of type "action"'% args[0]
 		sys.exit(1)
 
-	# import json
-	# print json.dumps(site, indent=2)
-	
-	# documents = site.documents
-	# posts = site.posts
 	if(action._init_plugin_(args, config)):
 		action._run_plugin_()

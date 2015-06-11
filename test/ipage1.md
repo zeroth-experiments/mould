@@ -7,6 +7,7 @@ layout: page
 
 #This is test 
 
+![alt text](/assets/apple-touch-icon-144-precomposed.png)
 ##this is h2
 h2
 
