@@ -5,7 +5,7 @@
 # @Date:   2015-06-01 10:56:26
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-09 13:19:23
+# @Last Modified time: 2015-06-10 16:48:55
 
 # plugin name is just being use for debug purpose 
 # it has nothing to do with actual plugin loader
@@ -19,14 +19,14 @@ import shutil
 
 dir_name = None
 def _init_plugin_(args, config):
-    #TODO: build can have arguments
-    if(len(args)<2):
-    	print "new needs one argument use it like muld new <directory_name>"
-    	sys.exit(1)
+	#TODO: build can have arguments
+	if(len(args)<2):
+		print "new needs one argument use it like muld new <directory_name>"
+		sys.exit(1)
 
-    global dir_name
-    dir_name = args[1]
-    return True
+	global dir_name
+	dir_name = args[1]
+	return True
 
 
 def _run_plugin_():
@@ -35,5 +35,7 @@ def _run_plugin_():
 	template_path = os.path.join(new_plugin_path, "site_template")
 	global dir_name
 	if(os.path.exists(template_path)):
-		shutil.copytree(template_path, os.path.join(cwd, dir_name))
-	
+		if( not os.path.exists(os.path.join(cwd, dir_name))):
+			shutil.copytree(template_path, os.path.join(cwd, dir_name))
+		else:
+			print "%s already exists delete it or choos the new name which you want to create" % os.path.join(cwd, dir_name)

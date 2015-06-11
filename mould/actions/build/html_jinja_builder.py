@@ -4,7 +4,7 @@
 # @Email: abhishek@zeroth.me
 # @Date:   2015-06-06 13:33:06
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-09 15:47:07
+# @Last Modified time: 2015-06-10 16:42:54
 # @License: Please read LICENSE file in project root#!/usr/bin/env python
 
 import sys
@@ -42,8 +42,8 @@ class JinjaBuilder:
         
         self.markdown = Markdown()
         self.template_dir_path = os.path.join(self.project_base, TEMPLATEDIR)
-        template_dictionary = self.get_template_dict(self.template_dir_path)
-        self.jinja_env = Environment(loader= DictLoader(template_dictionary))
+        self.template_dictionary = self.get_template_dict(self.template_dir_path)
+        self.jinja_env = Environment(loader= DictLoader(self.template_dictionary))
 
     def get_template_dict(self, dir_path):
         if(not os.path.exists(dir_path)):
@@ -67,26 +67,43 @@ class JinjaBuilder:
                 template_content = fd.read()
                 fd.close()
                 template_dict[template_name] = template_content
+        #load root index as a template if available.
+        root_index_path = os.path.join(self.project_base, 'index.html')
+        if(not os.path.exists(root_index_path)):
+            print "coudn't find Index.html at %s." % self.project_base
+            return template_dict
+
+        template_name = '__root_template__'
+        fd = open(root_index_path, 'r')
+        template_content = fd.read()
+        fd.close()
+        template_dict[template_name] = template_content
 
         return template_dict
 
     def process(self):
         #lets 1st process all the pages
         # print json.dumps(self.site, indent=2)
-        pages = self.site['pages']
-        pages_documents = pages['documents']
-        
-        for doc in pages_documents:
-            self.process_document(doc)
-            #TODO subdirectory feature needs to think properly
+        if self.config['document']:
+            pages = self.site['pages']
+            if( self.site['pages'].has_key('documents')):
+                pages_documents = pages['documents']
+                
+                for doc in pages_documents:
+                    self.process_document(doc)
+                    #TODO subdirectory feature needs to think properly
 
-        posts = self.site['posts']
-        for post in posts:
-            post_obj = self.process_post(post)
-            self.posts.append(post_obj)
+        if self.config['post']:
+            posts = self.site['posts']
+            for post in posts:
+                post_obj = self.process_post(post)
+                self.posts.append(post_obj)
 
-        if len(self.posts) :
-            self.create_post_index(self.config)
+            if len(self.posts) :
+                self.create_post_index()
+
+        if self.template_dictionary.has_key('__root_template__'):
+            self.process_root_index()
 
         self.process_misc()
 
@@ -120,7 +137,7 @@ class JinjaBuilder:
         description_html = self.markdown.convert(description)
         return {'title': title, 'url': post_dir_relpath, 'description': description_html , 'body':html}
 
-    def create_post_index(self, config):
+    def create_post_index(self):
         blog_dir = os.path.join(self.project_target, BLOG_TARGET_DIR)
         if(not os.path.exists(blog_dir)):
             print "Blog content has not generated please check!"
@@ -161,6 +178,17 @@ class JinjaBuilder:
         fd.write(data)
         fd.close()
 
+    def process_root_index(self):
+        template = self.jinja_env.get_template('__root_template__')
+        page = {
+            'title':'Home',
+        }
+        
+        data = template.render(site=self.site, posts=self.posts, page=page)
+        dest_file = os.path.join(self.project_target, 'index.html')
+        fd = open(dest_file, 'w')
+        fd.write(data)
+        fd.close()
     def process_misc(self):
         #move assets to _site
         if(os.path.exists(os.path.join(self.project_target, "assets"))):
