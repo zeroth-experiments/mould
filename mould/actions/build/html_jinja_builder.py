@@ -4,7 +4,7 @@
 # @Email: abhishek@zeroth.me
 # @Date:   2015-06-06 13:33:06
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-10 16:42:54
+# @Last Modified time: 2015-06-12 18:10:06
 # @License: Please read LICENSE file in project root#!/usr/bin/env python
 
 import sys
@@ -109,11 +109,13 @@ class JinjaBuilder:
 
     def process_post(self, post):
         title = post['title']
+        filename = post['filename'].split('.')[0]
         date = datetime.now()
         # if(post['header'].has_key('date')):
         #     date = datetime.strptime(post['header']['date'], '%Y-%m-%d')
+        print post['header']
         date = post['header']['date']
-        post_file_title = "-".join(title.split(" "))
+        post_file_title = "-".join(filename.split(" "))
         post_dir_relpath = "%s/%s/%s/%s/%s" %(BLOG_TARGET_DIR, date.year, date.month, date.day, post_file_title)
         post_dir_abspath = os.path.join(self.project_target, post_dir_relpath)
         if(not os.path.exists(post_dir_abspath)):
@@ -135,7 +137,7 @@ class JinjaBuilder:
         fd.close()
         description = "\n".join(body.split('\n')[:2])
         description_html = self.markdown.convert(description)
-        return {'title': title, 'url': post_dir_relpath, 'description': description_html , 'body':html}
+        return {'title': title, 'url': post_dir_relpath, 'description': description_html , 'body':html, 'header': post['header']}
 
     def create_post_index(self):
         blog_dir = os.path.join(self.project_target, BLOG_TARGET_DIR)
@@ -148,8 +150,8 @@ class JinjaBuilder:
         page = {
             'title': 'Blog'
         }
-
-        data = template.render(site=self.site, posts=self.posts, page=page)
+        sorted_post = self.get_sorted_posts()
+        data = template.render(site=self.site, posts=sorted_post, page=page)
         dest_file = os.path.join(blog_dir, 'index.html')
         fd = open(dest_file, 'w')
         fd.write(data)
@@ -158,7 +160,7 @@ class JinjaBuilder:
 
     def process_document(self, document):
         d = document
-        doc_filename = d['filename'].split('.')[0]
+        doc_filename = d['filename'].split('.')[0].lower()
         doc_dir_name = '_'.join(doc_filename.split())
         doc_target_dir = os.path.join(self.project_target, doc_dir_name)
 
@@ -183,7 +185,7 @@ class JinjaBuilder:
         page = {
             'title':'Home',
         }
-        
+
         data = template.render(site=self.site, posts=self.posts, page=page)
         dest_file = os.path.join(self.project_target, 'index.html')
         fd = open(dest_file, 'w')
@@ -194,3 +196,10 @@ class JinjaBuilder:
         if(os.path.exists(os.path.join(self.project_target, "assets"))):
             shutil.rmtree(os.path.join(self.project_target, "assets"))
         shutil.copytree(os.path.join(self.project_base, "_assets"), os.path.join(self.project_target, "assets"))
+
+    def get_sorted_posts(self):
+        decorated_post  = [(dict_['header']['date'], dict_) for dict_ in self.posts]
+        decorated_post.sort()
+        decorated_post.reverse()
+        sorted_post = [dict_ for (key, dict_) in decorated_post]
+        return sorted_post
