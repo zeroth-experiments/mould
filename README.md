@@ -28,6 +28,9 @@ how to use:
 1. get mould
 
     git clone https://github.com/zeroth/mould.git
+    cd mould
+    pip install -r requirements.txt
+    cd ..
 
 2. create new structure
     
