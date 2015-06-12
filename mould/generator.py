@@ -5,7 +5,7 @@
 # @Date:   2015-06-02 11:40:59
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-10 15:16:57
+# @Last Modified time: 2015-06-12 23:24:43
 
 import os
 import sys
@@ -14,7 +14,7 @@ import json
 from .file_processor import FileProcessor
 from .file_processor import Types
 
-DOCUMENT_IGNORE_LIST = ['_posts', '_assets', 'config.json', '_layouts', '_site', 'index.html']
+DOCUMENT_IGNORE_LIST = ['_posts', '_assets', 'config.json', '_layouts', '_site', 'index.html', '.git', '.gitignore']
 POST_DIR = '_posts'
 
 class Generator:
