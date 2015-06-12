@@ -27,19 +27,19 @@ how to use:
 
 1. get mould
 
-    git clone https://github.com/zeroth/mould.git
-    cd mould
-    pip install -r requirements.txt
-    cd ..
+    `git clone https://github.com/zeroth/mould.git`
+    `cd mould`
+    `pip install -r requirements.txt`
+    `cd ..`
 
 2. create new structure
     
-    python mould/main.py new `<dir_name>`
+    `python mould/main.py new` `<dir_name>`
 
 3. generate site
 
-    cd `<dir_name>`
-    python ../mould/main.py build
+    `cd` `<dir_name>`
+    `python ../mould/main.py build`
 
 
 what's inside new <dir_name>
