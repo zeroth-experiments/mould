@@ -5,7 +5,7 @@
 # @Date:   2015-06-01 08:04:45
 # @License: Please read LICENSE file in project root.
 # @Last Modified by:   abhishek
-# @Last Modified time: 2015-06-09 11:22:43
+# @Last Modified time: 2015-06-11 14:21:05
 import os
 import sys
 import re
@@ -59,7 +59,12 @@ class FileProcessor:
 		fd.close()
 		if raw.strip() == "" or raw == None:
 			return False
-		_, h, b = SPLITTER.split(raw, 2)
+		_raw_head_split = SPLITTER.split(raw, 2)
+		if(len(_raw_head_split)>=3):
+			 h = _raw_head_split[1]
+			 b = _raw_head_split[2]
+		else:
+			return False;
 		# self.header = self.header_to_dictionary(h)
 		try:
 			self.header = yaml.safe_load(h)
